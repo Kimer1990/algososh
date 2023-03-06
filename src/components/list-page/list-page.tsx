@@ -217,7 +217,7 @@ export const ListPage: React.FC = () => {
             <div className={styles.input}>
               <Input
                 placeholder="Введите значение"
-                max={11}
+                maxLength={4}
                 onChange={onChangeValueInput}
                 value={valueInput}
               ></Input>
@@ -263,8 +263,9 @@ export const ListPage: React.FC = () => {
             <div className={styles.input}>
               <Input
                 placeholder="Введите индекс"
-                max={11}
                 onChange={onChangeIndexInput}
+                max={array.length - 1}
+                min={0}
                 value={indexInput}
                 type={"number"}
               ></Input>

@@ -12,10 +12,19 @@ import { randomArr, TArray } from "./utils";
 
 export const SortingPage: React.FC = () => {
   const [methodSorting, setMethodSorting] = useState("selection");
+  const [isLoading, setIsLoading] = useState<Record<string, boolean>>({
+    asc: false,
+    desc: false,
+  });
 
   const [array, setArray] = useState<Array<TArray>>(randomArr);
 
   const bubbleSort = (direction: boolean) => {
+    if (direction === true) {
+      setIsLoading({ ...isLoading, asc: true });
+    } else {
+      setIsLoading({ ...isLoading, desc: true });
+    }
     let i = 0;
     let j = 0;
 
@@ -64,6 +73,7 @@ export const SortingPage: React.FC = () => {
               newArr[j].color = ElementStates.Modified;
 
               setArray(newArr);
+              setIsLoading({ asc: false, desc: false });
               clearInterval(interval);
             }, 300);
           }
@@ -74,6 +84,11 @@ export const SortingPage: React.FC = () => {
   };
 
   const selectionSort = (direction: boolean) => {
+    if (direction === true) {
+      setIsLoading({ ...isLoading, asc: true });
+    } else {
+      setIsLoading({ ...isLoading, desc: true });
+    }
     let i = 0;
     let j = i + 1;
 
@@ -119,6 +134,7 @@ export const SortingPage: React.FC = () => {
 
         if (i >= newArr.length - 1) {
           newArr[i].color = ElementStates.Modified;
+          setIsLoading({ asc: false, desc: false });
           clearInterval(interval);
         }
       }
@@ -164,7 +180,8 @@ export const SortingPage: React.FC = () => {
             type="submit"
             onClick={clickButtonUp}
             sorting={Direction.Ascending}
-            disabled={array.length === 0}
+            disabled={array.length === 0 || isLoading.desc}
+            isLoader={isLoading.asc}
           />
 
           <Button
@@ -172,13 +189,15 @@ export const SortingPage: React.FC = () => {
             type="submit"
             onClick={clickButtonDown}
             sorting={Direction.Descending}
-            disabled={array.length === 0}
+            disabled={array.length === 0 || isLoading.asc}
+            isLoader={isLoading.desc}
           />
         </div>
         <div>
           <Button
             text="Новый массив"
             type="submit"
+            disabled={isLoading.desc || isLoading.asc}
             onClick={() => {
               setArray(randomArr());
             }}

@@ -21,7 +21,7 @@ export const StackPage: React.FC = () => {
     const arr = array.concat();
     arr.push({
       value: valueInput,
-      color: ElementStates.Modified,
+      color: ElementStates.Changing,
     });
 
     setArray(arr);
@@ -38,7 +38,7 @@ export const StackPage: React.FC = () => {
 
   const popItem = () => {
     const arr = array.concat();
-    arr[arr.length - 1].color = ElementStates.Modified;
+    arr[arr.length - 1].color = ElementStates.Changing;
 
     setArray(arr);
 
@@ -58,7 +58,7 @@ export const StackPage: React.FC = () => {
       <div className={styles.stringbox}>
         <div className={styles.inputbox}>
           <div className={styles.input}>
-            <Input max={11} onChange={onChange} value={valueInput}></Input>
+            <Input maxLength={4} onChange={onChange} value={valueInput}></Input>
             <p className={styles.maxText}>Максимум 4 символа</p>
           </div>
           <div>

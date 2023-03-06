@@ -12,8 +12,10 @@ import { fibonacciNumbers } from "./utils";
 export const FibonacciPage: React.FC = () => {
   const [valueInput, setValueInput] = useState<number | string>("");
   const [arrayFibonacci, setArrayFibonacci] = useState<Array<number>>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const changeArrayFibonacci = (number: number) => {
+    setIsLoading(true);
     let arr = fibonacciNumbers(number);
 
     let i = 0;
@@ -26,6 +28,7 @@ export const FibonacciPage: React.FC = () => {
       if (i < arr.length - 1) {
         i++;
       } else {
+        setIsLoading(false);
         clearInterval(interval);
       }
     }, SHORT_DELAY_IN_MS);
@@ -48,13 +51,19 @@ export const FibonacciPage: React.FC = () => {
       <div className={styles.stringbox}>
         <div className={styles.inputbox}>
           <div className={styles.input}>
-            <Input max={11} onChange={onChange} value={valueInput}></Input>
+            <Input
+              type="number"
+              max={19}
+              onChange={onChange}
+              value={valueInput}
+            ></Input>
           </div>
           <Button
             text="Рассчитать"
             type="submit"
             onClick={clickButton}
             disabled={valueInput === "" || valueInput > 19}
+            isLoader={isLoading}
           />
         </div>
         Максимальное число — 19

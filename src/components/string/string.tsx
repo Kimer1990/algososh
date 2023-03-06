@@ -12,12 +12,14 @@ import { TArray } from "./utils";
 export const StringComponent: React.FC = () => {
   const [valueInput, setValueInput] = useState("");
   const [arrayLetters, setArrayLetters] = useState<Array<TArray>>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValueInput(e.currentTarget.value);
   };
 
   const reverse = (arr: TArray[]) => {
+    setIsLoading(true);
     let head = 0;
     let tail = arr.length - 1;
 
@@ -35,6 +37,7 @@ export const StringComponent: React.FC = () => {
         tail--;
 
         if (head > tail) {
+          setIsLoading(false);
           clearInterval(interval);
         } else {
           changeColor(arr, head, tail, ElementStates.Changing);
@@ -57,6 +60,9 @@ export const StringComponent: React.FC = () => {
   };
 
   const clickButton = () => {
+    console.log(isLoading);
+    setIsLoading(!isLoading);
+    console.log(isLoading);
     const arr = valueInput
       .split("")
       .map((value) => ({ value, color: ElementStates.Default }));
@@ -72,13 +78,18 @@ export const StringComponent: React.FC = () => {
       <div className={styles.stringbox}>
         <div className={styles.inputbox}>
           <div className={styles.input}>
-            <Input max={11} onChange={onChange} value={valueInput}></Input>
+            <Input
+              maxLength={11}
+              onChange={onChange}
+              value={valueInput}
+            ></Input>
           </div>
           <Button
             text="Развернуть"
             type="submit"
             onClick={clickButton}
             disabled={valueInput === "" || valueInput.length > 11}
+            isLoader={isLoading}
           />
         </div>
         Максимум 11 символов

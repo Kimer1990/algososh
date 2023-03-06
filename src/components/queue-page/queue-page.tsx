@@ -107,7 +107,7 @@ export const QueuePage: React.FC = () => {
       <div className={styles.stringbox}>
         <div className={styles.inputbox}>
           <div className={styles.input}>
-            <Input max={11} onChange={onChange} value={valueInput}></Input>
+            <Input maxLength={4} onChange={onChange} value={valueInput}></Input>
             <p className={styles.maxText}>Максимум 4 символа</p>
           </div>
           <div>
