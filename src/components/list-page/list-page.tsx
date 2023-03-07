@@ -285,6 +285,14 @@ export const ListPage: React.FC = () => {
                 maxLength={4}
                 onChange={onChangeValueInput}
                 value={valueInput}
+                disabled={
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
+                }
               ></Input>
               <p className={styles.maxText}>Максимум 4 символа</p>
             </div>
@@ -371,6 +379,14 @@ export const ListPage: React.FC = () => {
                 min={0}
                 value={indexInput}
                 type={"number"}
+                disabled={
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
+                }
               ></Input>
             </div>
             <div className={styles.btnBig}>

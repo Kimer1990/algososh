@@ -72,6 +72,7 @@ export const QueuePage: React.FC = () => {
     const tail = queue.getTail();
     if (head.index + 1 === tail.index) {
       clickButtonClear();
+      setIsLoading({ enqueue: false, dequeue: false });
     } else {
       queue.dequeue();
       const head = queue.getHead();
