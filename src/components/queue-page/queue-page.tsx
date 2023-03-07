@@ -17,12 +17,17 @@ export const QueuePage: React.FC = () => {
 
   const [valueInput, setValueInput] = useState<string>("");
   const [array, setArray] = useState<TArray[]>(initialArr);
+  const [isLoading, setIsLoading] = useState<Record<string, boolean>>({
+    enqueue: false,
+    dequeue: false,
+  });
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValueInput(e.currentTarget.value);
   };
 
-  const clickButtonAdd = () => {
+  const enqueueItem = () => {
+    setIsLoading({ ...isLoading, enqueue: true });
     setValueInput("");
 
     const newArray = array.concat();
@@ -56,10 +61,12 @@ export const QueuePage: React.FC = () => {
       const array = [...newArray];
       array[tail.index].color = ElementStates.Default;
       setArray(array);
+      setIsLoading({ enqueue: false, dequeue: false });
     }, SHORT_DELAY_IN_MS);
   };
 
-  const clickButtonDel = () => {
+  const dequeueItem = () => {
+    setIsLoading({ ...isLoading, dequeue: true });
     const newArray = [...array];
     const head = queue.getHead();
     const tail = queue.getTail();
@@ -87,6 +94,7 @@ export const QueuePage: React.FC = () => {
           array[0].head = HEAD;
         }
         setArray(array);
+        setIsLoading({ enqueue: false, dequeue: false });
       }, SHORT_DELAY_IN_MS);
     }
   };
@@ -114,20 +122,23 @@ export const QueuePage: React.FC = () => {
             <Button
               text="Добавить"
               type="submit"
-              onClick={clickButtonAdd}
+              onClick={enqueueItem}
               disabled={
                 valueInput === "" ||
                 valueInput.length > 4 ||
-                queue.getLength() >= queueSize
+                queue.getLength() >= queueSize ||
+                isLoading.dequeue
               }
+              isLoader={isLoading.enqueue}
             />
           </div>{" "}
           <div className={styles.btnDelete}>
             <Button
               text="Удалить"
               type="submit"
-              onClick={clickButtonDel}
-              disabled={array.length === 0}
+              onClick={dequeueItem}
+              disabled={array.length === 0 || isLoading.enqueue}
+              isLoader={isLoading.dequeue}
             />
           </div>
           <div>
@@ -135,7 +146,9 @@ export const QueuePage: React.FC = () => {
               text="Очистить"
               type="submit"
               onClick={clickButtonClear}
-              disabled={array.length === 0}
+              disabled={
+                array.length === 0 || isLoading.enqueue || isLoading.dequeue
+              }
             />
           </div>
         </div>

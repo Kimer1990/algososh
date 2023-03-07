@@ -175,25 +175,28 @@ export const SortingPage: React.FC = () => {
           />
         </div>
         <div className={styles.flex}>
-          <Button
-            text="По возрастанию"
-            type="submit"
-            onClick={clickButtonUp}
-            sorting={Direction.Ascending}
-            disabled={array.length === 0 || isLoading.desc}
-            isLoader={isLoading.asc}
-          />
-
-          <Button
-            text="По убыванию"
-            type="submit"
-            onClick={clickButtonDown}
-            sorting={Direction.Descending}
-            disabled={array.length === 0 || isLoading.asc}
-            isLoader={isLoading.desc}
-          />
+          <div className={styles.btn}>
+            <Button
+              text="По возрастанию"
+              type="submit"
+              onClick={clickButtonUp}
+              sorting={Direction.Ascending}
+              disabled={array.length === 0 || isLoading.desc}
+              isLoader={isLoading.asc}
+            />
+          </div>
+          <div className={styles.btn}>
+            <Button
+              text="По убыванию"
+              type="submit"
+              onClick={clickButtonDown}
+              sorting={Direction.Descending}
+              disabled={array.length === 0 || isLoading.asc}
+              isLoader={isLoading.desc}
+            />
+          </div>
         </div>
-        <div>
+        <div className={styles.btn}>
           <Button
             text="Новый массив"
             type="submit"

@@ -22,6 +22,14 @@ export const ListPage: React.FC = () => {
     value: "",
     index: null,
   });
+  const [isLoading, setIsLoading] = useState<Record<string, boolean>>({
+    addToHead: false,
+    addToTail: false,
+    delHead: false,
+    delTail: false,
+    addByIndex: false,
+    delByIndex: false,
+  });
 
   const [array, setArray] = useState<TArray[]>(defaultArray);
 
@@ -34,60 +42,81 @@ export const ListPage: React.FC = () => {
   };
 
   const clickButtonAddToHead = () => {
-    setValueInput("");
-
+    setIsLoading({ ...isLoading, addToHead: true });
     setIndexUpCircle(0);
 
     const newArray = array.concat();
 
-    list.addToHead(valueInput);
+    setTimeout(() => {
+      list.addToHead(valueInput);
 
-    const newElement = {
-      value: valueInput,
-      color: ElementStates.Changing,
-    };
+      const newElement = {
+        value: valueInput,
+        color: ElementStates.Changing,
+      };
 
-    newArray.unshift(newElement);
+      newArray.unshift(newElement);
 
-    setArray(newArray);
+      setArray(newArray);
+    }, SHORT_DELAY_IN_MS);
 
     setTimeout(() => {
       setIndexUpCircle(null);
 
       const array = [...newArray];
-      array[0].color = ElementStates.Default;
+      array[0].color = ElementStates.Modified;
       setArray(array);
+
+      setTimeout(() => {
+        const array = [...newArray];
+        array[0].color = ElementStates.Default;
+        setArray(array);
+        setValueInput("");
+        setIsLoading({ ...isLoading, addToHead: false });
+      }, SHORT_DELAY_IN_MS);
     }, SHORT_DELAY_IN_MS);
   };
 
   const clickButtonAddToTail = () => {
-    setValueInput("");
+    setIsLoading({ ...isLoading, addToTail: true });
+    setIndexUpCircle(array.length - 1);
+
     const newArray = array.concat();
 
-    setIndexUpCircle(array.length);
+    setTimeout(() => {
+      setIndexUpCircle(array.length);
 
-    list.addToTail(valueInput);
+      list.addToTail(valueInput);
 
-    const newElement = {
-      value: valueInput,
-      color: ElementStates.Changing,
-    };
+      const newElement = {
+        value: valueInput,
+        color: ElementStates.Changing,
+      };
 
-    newArray.push(newElement);
+      newArray.push(newElement);
 
-    setArray(newArray);
+      setArray(newArray);
+    }, SHORT_DELAY_IN_MS);
 
     setTimeout(() => {
       setIndexUpCircle(null);
 
       const array = [...newArray];
-
-      array[array.length - 1].color = ElementStates.Default;
+      array[array.length - 1].color = ElementStates.Modified;
       setArray(array);
+
+      setTimeout(() => {
+        const array = [...newArray];
+        array[array.length - 1].color = ElementStates.Default;
+        setArray(array);
+        setValueInput("");
+        setIsLoading({ ...isLoading, addToTail: false });
+      }, SHORT_DELAY_IN_MS);
     }, SHORT_DELAY_IN_MS);
   };
 
   const clickButtonDelHead = () => {
+    setIsLoading({ ...isLoading, delHead: true });
     const newArray = array.concat();
     const downCircle = {
       value: newArray[0].value,
@@ -99,7 +128,6 @@ export const ListPage: React.FC = () => {
     list.delFromHead();
 
     newArray[0].value = "";
-    newArray[0].color = ElementStates.Changing;
 
     setArray(newArray);
 
@@ -114,10 +142,12 @@ export const ListPage: React.FC = () => {
       array.shift();
 
       setArray(array);
+      setIsLoading({ ...isLoading, delHead: false });
     }, SHORT_DELAY_IN_MS);
   };
 
   const clickButtonDelTail = () => {
+    setIsLoading({ ...isLoading, delTail: true });
     const newArray = array.concat();
 
     const downCircle = {
@@ -130,7 +160,6 @@ export const ListPage: React.FC = () => {
     list.delFromTail();
 
     newArray[newArray.length - 1].value = "";
-    newArray[newArray.length - 1].color = ElementStates.Changing;
 
     setArray(newArray);
 
@@ -145,68 +174,104 @@ export const ListPage: React.FC = () => {
       array.pop();
 
       setArray(array);
+      setIsLoading({ ...isLoading, delTail: false });
     }, SHORT_DELAY_IN_MS);
   };
 
   const clickButtonAddByIndex = () => {
+    setIsLoading({ ...isLoading, addByIndex: true });
     const newArray = array.concat();
 
-    setIndexUpCircle(indexInput);
+    let i = 0;
 
-    list.addByIndex(indexInput, valueInput);
+    const interval = setInterval(() => {
+      if (i > indexInput) {
+        const array = [...newArray];
+        array.forEach((e) => (e.color = ElementStates.Default));
+        setArray(array);
+        list.addByIndex(indexInput, valueInput);
 
-    const newElement = {
-      value: valueInput,
-      color: ElementStates.Changing,
-    };
+        const newElement = {
+          value: valueInput,
+          color: ElementStates.Modified,
+        };
 
-    newArray.splice(indexInput, 0, newElement);
+        newArray.splice(indexInput, 0, newElement);
 
-    setArray(newArray);
+        setArray(newArray);
 
-    setTimeout(() => {
-      setIndexUpCircle(null);
+        setIndexUpCircle(null);
 
-      const array = [...newArray];
-      array[indexInput].color = ElementStates.Default;
-      setArray(array);
+        setTimeout(() => {
+          const array = [...newArray];
+          array[indexInput].color = ElementStates.Default;
+          setArray(array);
+          setValueInput("");
+          setIndexInput("");
+          setIsLoading({ ...isLoading, addByIndex: false });
+        }, SHORT_DELAY_IN_MS);
+        clearInterval(interval);
+      } else {
+        if (i !== 0) {
+          const array = [...newArray];
+          array[i - 1].color = ElementStates.Changing;
+          setArray(array);
+        }
+        setIndexUpCircle(i);
+        i++;
+      }
     }, SHORT_DELAY_IN_MS);
-    setValueInput("");
-    setIndexInput("");
   };
 
   const clickButtonDelByIndex = () => {
+    setIsLoading({ ...isLoading, delByIndex: true });
     const newArray = array.concat();
 
-    const downCircle = {
-      value: newArray[indexInput].value,
-      index: indexInput,
-    };
+    const idx = parseInt(indexInput);
 
-    setIndexDownCircle(downCircle);
+    let i = 0;
 
-    list.delByIndex(indexInput);
+    const interval = setInterval(() => {
+      if (i > indexInput) {
+        console.log(i, "+");
+        const downCircle = {
+          value: newArray[idx].value,
+          index: idx,
+        };
 
-    newArray[indexInput].value = "";
-    newArray[indexInput].color = ElementStates.Changing;
+        setIndexDownCircle(downCircle);
 
-    setArray(newArray);
+        list.delByIndex(indexInput);
 
-    setTimeout(() => {
-      const downCircle = {
-        value: "",
-        index: null,
-      };
+        newArray[indexInput].value = "";
+        newArray[indexInput].color = ElementStates.Default;
 
-      setIndexDownCircle(downCircle);
-      const array = [...newArray];
+        setArray(newArray);
 
-      array.splice(indexInput, 1);
+        setTimeout(() => {
+          const downCircle = {
+            value: "",
+            index: null,
+          };
 
-      setArray(array);
+          setIndexDownCircle(downCircle);
+          const array = [...newArray];
+
+          array.splice(indexInput, 1);
+          array.forEach((e) => (e.color = ElementStates.Default));
+
+          setArray(array);
+          setIndexInput("");
+          setIsLoading({ ...isLoading, delByIndex: false });
+        }, SHORT_DELAY_IN_MS);
+        clearInterval(interval);
+      } else {
+        const array = [...newArray];
+        array[i].color = ElementStates.Changing;
+        setArray(array);
+        i++;
+      }
     }, SHORT_DELAY_IN_MS);
-
-    setIndexInput("");
   };
 
   return (
@@ -228,7 +293,17 @@ export const ListPage: React.FC = () => {
                 text="Добавить в head"
                 type="submit"
                 onClick={clickButtonAddToHead}
-                disabled={valueInput.length > 4 || valueInput === ""}
+                disabled={
+                  valueInput.length > 4 ||
+                  valueInput === "" ||
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
+                }
+                isLoader={isLoading.addToHead}
               />
             </div>
             <div className={styles.btn}>
@@ -236,7 +311,17 @@ export const ListPage: React.FC = () => {
                 text="Добавить в tail"
                 type="submit"
                 onClick={clickButtonAddToTail}
-                disabled={valueInput.length > 4 || valueInput === ""}
+                disabled={
+                  valueInput.length > 4 ||
+                  valueInput === "" ||
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
+                }
+                isLoader={isLoading.addToTail}
               />
             </div>
             <div className={styles.btn}>
@@ -244,15 +329,33 @@ export const ListPage: React.FC = () => {
                 text="Удалить из head"
                 type="submit"
                 onClick={clickButtonDelHead}
-                disabled={array.length === 0}
+                disabled={
+                  array.length === 0 ||
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
+                }
+                isLoader={isLoading.delHead}
               />
             </div>
-            <div>
+            <div className={styles.btn}>
               <Button
                 text="Удалить из tail"
                 type="submit"
                 onClick={clickButtonDelTail}
-                disabled={array.length === 0}
+                disabled={
+                  array.length === 0 ||
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
+                }
+                isLoader={isLoading.delTail}
               />
             </div>{" "}
           </div>
@@ -278,8 +381,15 @@ export const ListPage: React.FC = () => {
                 disabled={
                   indexInput > array.length ||
                   valueInput === "" ||
-                  indexInput === ""
+                  indexInput === "" ||
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
                 }
+                isLoader={isLoading.addByIndex}
                 extraClass={styles.buttonWidth}
               />
             </div>
@@ -288,7 +398,17 @@ export const ListPage: React.FC = () => {
                 text="Удалить по индексу"
                 type="submit"
                 onClick={clickButtonDelByIndex}
-                disabled={indexInput === "" || indexInput > array.length - 1}
+                disabled={
+                  indexInput === "" ||
+                  indexInput > array.length - 1 ||
+                  isLoading.addToHead ||
+                  isLoading.addToTail ||
+                  isLoading.delHead ||
+                  isLoading.delTail ||
+                  isLoading.addByIndex ||
+                  isLoading.delByIndex
+                }
+                isLoader={isLoading.delByIndex}
                 extraClass={styles.buttonWidth}
               />
             </div>
@@ -303,17 +423,20 @@ export const ListPage: React.FC = () => {
               {index === indexUpCircle && (
                 <Circle
                   state={ElementStates.Changing}
-                  letter={item.value}
+                  letter={valueInput}
                   isSmall={true}
                   extraClass={styles.upCircle}
                 />
               )}
-              {index === 0 && <p className={styles.head}>head</p>}
+              {index === 0 && index !== indexUpCircle && (
+                <p className={styles.head}>head</p>
+              )}
               <Circle letter={item.value} state={item.color} />
               <p>{index}</p>
-              {index === array.length - 1 && (
-                <p className={styles.tail}>tail</p>
-              )}
+              {index === array.length - 1 &&
+                index !== indexDownCircle.index && (
+                  <p className={styles.tail}>tail</p>
+                )}
               {index === indexDownCircle.index && (
                 <Circle
                   state={ElementStates.Changing}

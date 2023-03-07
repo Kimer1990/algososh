@@ -58,13 +58,15 @@ export const FibonacciPage: React.FC = () => {
               value={valueInput}
             ></Input>
           </div>
-          <Button
-            text="Рассчитать"
-            type="submit"
-            onClick={clickButton}
-            disabled={valueInput === "" || valueInput > 19}
-            isLoader={isLoading}
-          />
+          <div className={styles.btn}>
+            <Button
+              text="Рассчитать"
+              type="submit"
+              onClick={clickButton}
+              disabled={valueInput === "" || valueInput > 19}
+              isLoader={isLoading}
+            />
+          </div>
         </div>
         Максимальное число — 19
       </div>

@@ -12,12 +12,17 @@ import { TArray } from "./utils";
 export const StackPage: React.FC = () => {
   const [valueInput, setValueInput] = useState<string>("");
   const [array, setArray] = useState<TArray[]>([]);
+  const [isLoading, setIsLoading] = useState<Record<string, boolean>>({
+    push: false,
+    pop: false,
+  });
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValueInput(e.currentTarget.value);
   };
 
   const pushItem = () => {
+    setIsLoading({ ...isLoading, push: true });
     const arr = array.concat();
     arr.push({
       value: valueInput,
@@ -29,14 +34,15 @@ export const StackPage: React.FC = () => {
     setTimeout(() => {
       const newArr = arr.concat();
       newArr[newArr.length - 1].color = ElementStates.Default;
-
       setArray(newArr);
+      setIsLoading({ push: false, pop: false });
     }, SHORT_DELAY_IN_MS);
 
     setValueInput("");
   };
 
   const popItem = () => {
+    setIsLoading({ ...isLoading, pop: true });
     const arr = array.concat();
     arr[arr.length - 1].color = ElementStates.Changing;
 
@@ -46,6 +52,7 @@ export const StackPage: React.FC = () => {
       const newArr = arr.concat();
       newArr.pop();
       setArray(newArr);
+      setIsLoading({ push: false, pop: false });
     }, SHORT_DELAY_IN_MS);
   };
 
@@ -66,7 +73,10 @@ export const StackPage: React.FC = () => {
               text="Добавить"
               type="submit"
               onClick={pushItem}
-              disabled={valueInput === "" || valueInput.length > 4}
+              disabled={
+                valueInput === "" || valueInput.length > 4 || isLoading.pop
+              }
+              isLoader={isLoading.push}
             />
           </div>{" "}
           <div className={styles.btnDelete}>
@@ -74,7 +84,8 @@ export const StackPage: React.FC = () => {
               text="Удалить"
               type="submit"
               onClick={popItem}
-              disabled={array.length === 0}
+              disabled={array.length === 0 || isLoading.push}
+              isLoader={isLoading.pop}
             />
           </div>{" "}
           <div>
@@ -82,7 +93,7 @@ export const StackPage: React.FC = () => {
               text="Очистить"
               type="submit"
               onClick={clickButtonClear}
-              disabled={array.length === 0}
+              disabled={array.length === 0 || isLoading.push || isLoading.pop}
             />
           </div>
         </div>

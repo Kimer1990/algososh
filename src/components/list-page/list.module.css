@@ -20,12 +20,13 @@
 }
 
 .input {
-  margin-right: 12px;
+  width: 204px;
   position: relative;
 }
 
 .inputbox {
   display: flex;
+  column-gap: 12px;
 }
 
 .curcles {
@@ -50,8 +51,7 @@
 }
 
 .btnBig {
-  margin-right: 12px;
-  width: 338px;
+  width: 362px;
 }
 
 .head {
@@ -67,7 +67,7 @@
 }
 
 .btn {
-  margin-right: 12px;
+  width: 175px;
 }
 
 .maxText {
@@ -81,12 +81,12 @@
 
 .downCircle {
   position: absolute;
-  top: 140px;
+  top: 125px;
   left: 22px;
 }
 
 .upCircle {
   position: absolute;
-  top: -85px;
+  top: -70px;
   left: 22px;
 }

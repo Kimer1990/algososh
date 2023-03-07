@@ -84,13 +84,15 @@ export const StringComponent: React.FC = () => {
               value={valueInput}
             ></Input>
           </div>
-          <Button
-            text="Развернуть"
-            type="submit"
-            onClick={clickButton}
-            disabled={valueInput === "" || valueInput.length > 11}
-            isLoader={isLoading}
-          />
+          <div className={styles.btn}>
+            <Button
+              text="Развернуть"
+              type="submit"
+              onClick={clickButton}
+              disabled={valueInput === "" || valueInput.length > 11}
+              isLoader={isLoading}
+            />
+          </div>
         </div>
         Максимум 11 символов
       </div>
