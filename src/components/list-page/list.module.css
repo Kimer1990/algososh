@@ -1,0 +1,92 @@
+.stringboxs {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin: auto;
+  align-items: center;
+}
+
+.stringbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stringboxSecond {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input {
+  width: 204px;
+  position: relative;
+}
+
+.inputbox {
+  display: flex;
+  column-gap: 12px;
+}
+
+.curcles {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  margin-top: 90px;
+  align-items: flex-start;
+}
+
+.curcle {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  list-style-type: none;
+  padding-left: 10px;
+  position: relative;
+  display: flex;
+  align-items: baseline;
+}
+
+.btnBig {
+  width: 362px;
+}
+
+.head {
+  position: absolute;
+  top: -44px;
+  left: 30px;
+}
+
+.tail {
+  position: absolute;
+  top: 100px;
+  left: 40px;
+}
+
+.btn {
+  width: 175px;
+}
+
+.maxText {
+  position: absolute;
+  left: 12px;
+}
+
+.buttonWidth {
+  width: 100%;
+}
+
+.downCircle {
+  position: absolute;
+  top: 125px;
+  left: 22px;
+}
+
+.upCircle {
+  position: absolute;
+  top: -70px;
+  left: 22px;
+}
