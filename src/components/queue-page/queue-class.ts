@@ -1,15 +1,15 @@
 interface IQueue<T> {
   enqueue: (value: T) => void;
   dequeue: () => void;
-  getHead: () => { value: T | null; index: number };
-  getTail: () => { value: T | null; index: number };
+  getHead: () => { value: T | null; index: number } | undefined;
+  getTail: () => { value: T | null; index: number } | undefined;
   clear: () => void;
 }
 
 export default class Queue<T> implements IQueue<T> {
   container: (T | null)[] = [];
-  head: number = 0;
-  tail: number = 0;
+  head: number | undefined = undefined;
+  tail: number | undefined = undefined;
   size: number = 0;
   length: number = 0;
 
@@ -19,48 +19,67 @@ export default class Queue<T> implements IQueue<T> {
   }
 
   enqueue(item: T) {
-    this.container[this.tail % this.size] = item;
-    this.tail++;
-    this.length++;
+    if (this.tail === undefined) {
+      console.log("+");
+      this.tail = 0;
+      this.head = 0;
+      this.container[this.tail % this.size] = item;
+      console.log(this.container[this.tail % this.size]);
+    } else {
+      this.tail++;
+      this.length++;
+      this.container[this.tail % this.size] = item;
+    }
   }
 
   dequeue() {
-    this.container[this.head % this.size] = null;
-    this.head++;
-    this.length--;
+    if (this.head !== undefined) {
+      this.container[this.head % this.size] = null;
+      this.head++;
+      this.length--;
+    }
   }
 
   clear = () => {
-    this.head = 0;
-    this.tail = 0;
+    this.head = undefined;
+    this.tail = undefined;
     this.length = 0;
   };
 
-  getHead = (): { value: T | null; index: number } => {
-    if ((this.head - 1) % this.size === 0 || this.head === 0) {
-      return {
-        value: this.container[0],
-        index: 0,
-      };
+  getHead = (): { value: T | null; index: number } | undefined => {
+    console.log("getHead", this.head);
+    if (this.head !== undefined) {
+      if (this.head % this.size === 0 || this.head === 0) {
+        return {
+          value: this.container[0],
+          index: 0,
+        };
+      } else {
+        return {
+          value: this.container[this.head % this.size],
+          index: this.head % this.size,
+        };
+      }
     } else {
-      return {
-        value: this.container[(this.head - 1) % this.size],
-        index: (this.head - 1) % this.size,
-      };
+      return undefined;
     }
   };
 
-  getTail = (): { value: T | null; index: number } => {
-    if ((this.tail - 1) % this.size === 0) {
-      return {
-        value: this.container[0],
-        index: 0,
-      };
+  getTail = (): { value: T | null; index: number } | undefined => {
+    if (this.tail !== undefined) {
+      if (this.tail % this.size === 0) {
+        return {
+          value: this.container[0],
+          index: 0,
+        };
+      } else {
+        return {
+          value: this.container[this.tail % this.size],
+          index: this.tail % this.size,
+        };
+      }
     } else {
-      return {
-        value: this.container[(this.tail - 1) % this.size],
-        index: (this.tail - 1) % this.size,
-      };
+      return undefined;
     }
   };
 

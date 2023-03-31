@@ -37,66 +37,68 @@ export const QueuePage: React.FC = () => {
     const head = queue.getHead();
     const tail = queue.getTail();
 
-    newArray[head.index].value = head.value;
-    if (head.index === 0) {
-      newArray[head.index].head = HEAD;
-    } else if ((head.index + 1) % queueSize === 0) {
-      array[0].head = HEAD;
-    } else {
-      newArray[head.index + 1].head = HEAD;
-    }
+    if (head && tail) {
+      newArray[head.index].value = head.value;
+      if (head.index === 0) {
+        newArray[head.index].head = HEAD;
+      }
+      if (tail.index > 0) {
+        newArray[tail.index - 1].tail = "";
+      } else if (tail.index === 0) {
+        newArray[newArray.length - 1].tail = "";
+      }
 
-    if (tail.index > 0) {
-      newArray[tail.index - 1].tail = "";
-    } else if (tail.index === 0) {
-      newArray[newArray.length - 1].tail = "";
-    }
-
-    newArray[tail.index].value = tail.value;
-    newArray[tail.index].tail = TAIL;
-    newArray[tail.index].color = ElementStates.Changing;
-    setArray(newArray);
-
-    setTimeout(() => {
-      const array = [...newArray];
-      array[tail.index].color = ElementStates.Default;
-      setArray(array);
-      setIsLoading({ enqueue: false, dequeue: false });
-    }, SHORT_DELAY_IN_MS);
-  };
-
-  const dequeueItem = () => {
-    setIsLoading({ ...isLoading, dequeue: true });
-    const newArray = [...array];
-    const head = queue.getHead();
-    const tail = queue.getTail();
-    if (head.index + 1 === tail.index) {
-      clickButtonClear();
-      setIsLoading({ enqueue: false, dequeue: false });
-    } else {
-      queue.dequeue();
-      const head = queue.getHead();
-      newArray[head.index].color = ElementStates.Changing;
-
+      newArray[tail.index].value = tail.value;
+      newArray[tail.index].tail = TAIL;
+      newArray[tail.index].color = ElementStates.Changing;
       setArray(newArray);
 
       setTimeout(() => {
         const array = [...newArray];
 
-        array[head.index].color = ElementStates.Default;
-        if (head.index >= 0) {
-          array[head.index].head = "";
-          array[head.index].value = "";
-        }
-        array[head.index].value = head.value;
-        if ((head.index + 1) % queueSize > 0 || head.index === 0) {
-          array[head.index + 1].head = HEAD;
-        } else if ((head.index + 1) % queueSize === 0) {
-          array[0].head = HEAD;
-        }
+        array[tail.index].color = ElementStates.Default;
         setArray(array);
         setIsLoading({ enqueue: false, dequeue: false });
       }, SHORT_DELAY_IN_MS);
+    }
+  };
+
+  const dequeueItem = () => {
+    setIsLoading({ ...isLoading, dequeue: true });
+
+    const newArray = array.concat();
+
+    const head = queue.getHead();
+    const tail = queue.getTail();
+
+    if (head && tail) {
+      if (head.index === tail.index) {
+        clickButtonClear();
+        setIsLoading({ enqueue: false, dequeue: false });
+      } else {
+        newArray[head.index].color = ElementStates.Changing;
+
+        setArray(newArray);
+
+        setTimeout(() => {
+          const array = [...newArray];
+
+          array[head.index].color = ElementStates.Default;
+          array[head.index].head = "";
+          array[head.index].value = "";
+
+          queue.dequeue();
+
+          const newhead = queue.getHead();
+
+          if (newhead) {
+            array[newhead.index].head = HEAD;
+          }
+
+          setArray(array);
+          setIsLoading({ enqueue: false, dequeue: false });
+        }, SHORT_DELAY_IN_MS);
+      }
     }
   };
 
@@ -155,14 +157,16 @@ export const QueuePage: React.FC = () => {
         </div>
       </div>
 
-      <ul className={styles.curcles}>
+      <ul className={styles.circles}>
         {array.map((item, index) => (
-          <li className={styles.curcle} key={index}>
-            {item.head === HEAD && <p className={styles.head}>head</p>}
-            <Circle letter={item.value} state={item.color} />
-
-            <p>{index}</p>
-            {item.tail === TAIL && <p>tail</p>}
+          <li className={styles.circle} key={index}>
+            <Circle
+              letter={item.value}
+              state={item.color}
+              head={item.head === HEAD ? "head" : ""}
+              tail={item.tail === TAIL ? "tail" : ""}
+              index={index}
+            />
           </li>
         ))}
       </ul>

@@ -63,7 +63,7 @@ export const FibonacciPage: React.FC = () => {
               text="Рассчитать"
               type="submit"
               onClick={clickButton}
-              disabled={valueInput === "" || valueInput > 19}
+              disabled={valueInput === "" || +valueInput > 19}
               isLoader={isLoading}
             />
           </div>
@@ -71,9 +71,9 @@ export const FibonacciPage: React.FC = () => {
         Максимальное число — 19
       </div>
 
-      <ul className={styles.curcles}>
+      <ul className={styles.circles}>
         {arrayFibonacci.map((item, index) => (
-          <li className={styles.curcle} key={index}>
+          <li className={styles.circle} key={index}>
             <Circle letter={item} state={ElementStates.Default} />
             <p>{index}</p>
           </li>
