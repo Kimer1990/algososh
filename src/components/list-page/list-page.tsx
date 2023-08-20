@@ -432,9 +432,9 @@ export const ListPage: React.FC = () => {
         </div>
       </div>
 
-      <ul className={styles.curcles}>
+      <ul className={styles.circles}>
         {array.map((item, index) => (
-          <li className={styles.curcle} key={index}>
+          <li className={styles.circle} key={index}>
             <div>
               {index === indexUpCircle && (
                 <Circle
@@ -444,15 +444,17 @@ export const ListPage: React.FC = () => {
                   extraClass={styles.upCircle}
                 />
               )}
-              {index === 0 && index !== indexUpCircle && (
-                <p className={styles.head}>head</p>
-              )}
-              <Circle letter={item.value} state={item.color} />
-              <p>{index}</p>
-              {index === array.length - 1 &&
-                index !== indexDownCircle.index && (
-                  <p className={styles.tail}>tail</p>
-                )}
+              <Circle
+                letter={item.value}
+                state={item.color}
+                head={index === 0 && index !== indexUpCircle ? "head" : ""}
+                tail={
+                  index === array.length - 1 && index !== indexDownCircle.index
+                    ? "tail"
+                    : ""
+                }
+                index={index}
+              />
               {index === indexDownCircle.index && (
                 <Circle
                   state={ElementStates.Changing}

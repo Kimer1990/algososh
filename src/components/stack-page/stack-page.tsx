@@ -99,12 +99,15 @@ export const StackPage: React.FC = () => {
         </div>
       </div>
 
-      <ul className={styles.curcles}>
+      <ul className={styles.circles}>
         {array.map((item, index) => (
-          <li className={styles.curcle} key={index}>
-            {index === array.length - 1 && <p>top</p>}
-            <Circle letter={item.value} state={item.color} />
-            <p>{index}</p>
+          <li className={styles.circle} key={index}>
+            <Circle
+              letter={item.value}
+              state={item.color}
+              head={index === array.length - 1 ? "top" : ""}
+              index={index}
+            />
           </li>
         ))}
       </ul>

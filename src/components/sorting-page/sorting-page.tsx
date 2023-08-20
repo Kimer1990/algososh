@@ -6,6 +6,7 @@ import { Column } from "../ui/column/column";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { delay } from "../../utils/utils";
 
 import styles from "./sorting.module.css";
 import { randomArr, TArray } from "./utils";
@@ -19,28 +20,19 @@ export const SortingPage: React.FC = () => {
 
   const [array, setArray] = useState<Array<TArray>>(randomArr);
 
-  const bubbleSort = (direction: boolean) => {
+  const bubbleSort = async (newArr: Array<TArray>, direction: boolean) => {
     if (direction === true) {
       setIsLoading({ ...isLoading, asc: true });
     } else {
       setIsLoading({ ...isLoading, desc: true });
     }
-    let i = 0;
-    let j = 0;
 
-    let newArr = array.concat();
-    newArr.forEach((item) => {
-      item.color = ElementStates.Default;
-    });
-
-    const interval = setInterval(function () {
-      newArr = newArr.concat();
-
-      newArr[j].color = ElementStates.Changing;
-      newArr[j + 1].color = ElementStates.Changing;
-
-      setArray(newArr);
-      setTimeout(function () {
+    for (let i = 0; i < newArr.length; i++) {
+      for (let j = 0; j < newArr.length - i - 1; j++) {
+        newArr[j].color = ElementStates.Changing;
+        newArr[j + 1].color = ElementStates.Changing;
+        setArray([...newArr]);
+        await delay(SHORT_DELAY_IN_MS);
         if (direction === true) {
           if (newArr[j].value > newArr[j + 1].value) {
             let temp = newArr[j];
@@ -54,108 +46,74 @@ export const SortingPage: React.FC = () => {
             newArr[j + 1] = temp;
           }
         }
-
         newArr[j].color = ElementStates.Default;
-        setArray(newArr);
+        newArr[j + 1].color = ElementStates.Default;
+      }
+      newArr[newArr.length - i - 1].color = ElementStates.Modified;
+    }
 
-        if (j < newArr.length - i - 2) {
-          j++;
-        } else {
-          newArr[j + 1].color = ElementStates.Modified;
-          setArray(newArr);
-
-          i++;
-          j = 0;
-          if (i >= newArr.length) {
-            setTimeout(function () {
-              newArr = newArr.concat();
-              newArr[j + 1].color = ElementStates.Modified;
-              newArr[j].color = ElementStates.Modified;
-
-              setArray(newArr);
-              setIsLoading({ asc: false, desc: false });
-              clearInterval(interval);
-            }, 300);
-          }
-        }
-      }, SHORT_DELAY_IN_MS);
-      document.addEventListener("click", () => clearInterval(interval));
-    }, SHORT_DELAY_IN_MS);
+    setIsLoading({ asc: false, desc: false });
   };
 
-  const selectionSort = (direction: boolean) => {
+  const selectionSort = async (newArr: Array<TArray>, direction: boolean) => {
     if (direction === true) {
       setIsLoading({ ...isLoading, asc: true });
     } else {
       setIsLoading({ ...isLoading, desc: true });
     }
-    let i = 0;
-    let j = i + 1;
 
-    let minIndex = i;
-
-    let newArr = array.concat();
-    newArr.forEach((item) => {
-      item.color = ElementStates.Default;
-    });
-
-    setArray(newArr);
-
-    const interval = setInterval(function () {
-      newArr = newArr.concat();
-
-      for (let k = i; k < newArr.length; k++) {
-        newArr[k].color = ElementStates.Default;
-      }
-
-      newArr[j].color = ElementStates.Changing;
-      newArr[minIndex].color = ElementStates.Changing;
-
-      if (direction === true) {
-        if (newArr[j].value < newArr[minIndex].value) {
-          minIndex = j;
+    for (let i = 0; i < newArr.length; i++) {
+      let index = i;
+      newArr[index].color = ElementStates.Changing;
+      setArray([...newArr]);
+      await delay(SHORT_DELAY_IN_MS);
+      for (let j = i + 1; j < newArr.length; j++) {
+        newArr[j].color = ElementStates.Changing;
+        setArray([...newArr]);
+        if (direction === true) {
+          if (newArr[j].value < newArr[index].value) {
+            newArr[index].color = ElementStates.Default;
+            index = j;
+            newArr[index].color = ElementStates.Changing;
+          } else {
+            newArr[j].color = ElementStates.Default;
+          }
+        } else {
+          if (newArr[j].value > newArr[index].value) {
+            newArr[index].color = ElementStates.Default;
+            index = j;
+            newArr[index].color = ElementStates.Changing;
+          } else {
+            newArr[j].color = ElementStates.Default;
+          }
         }
-      } else {
-        if (newArr[j].value > newArr[minIndex].value) {
-          minIndex = j;
-        }
+        await delay(SHORT_DELAY_IN_MS);
       }
+      let temp = newArr[index];
+      newArr[index] = newArr[i];
+      newArr[i] = temp;
+      newArr[index].color = ElementStates.Default;
+      newArr[i].color = ElementStates.Modified;
+      setArray([...newArr]);
+      await delay(SHORT_DELAY_IN_MS);
 
-      if (j < newArr.length - 1) {
-        j++;
-      } else {
-        let temp = newArr[minIndex];
-        newArr[minIndex] = newArr[i];
-        newArr[i] = temp;
-        newArr[i].color = ElementStates.Modified;
-        i++;
-        minIndex = i;
-        j = i + 1;
-
-        if (i >= newArr.length - 1) {
-          newArr[i].color = ElementStates.Modified;
-          setIsLoading({ asc: false, desc: false });
-          clearInterval(interval);
-        }
-      }
-      setArray(newArr);
-      document.addEventListener("click", () => clearInterval(interval));
-    }, 500);
+      setIsLoading({ asc: false, desc: false });
+    }
   };
 
   const clickButtonUp = () => {
     if (methodSorting === "bubble") {
-      bubbleSort(true);
+      bubbleSort(array, true);
     } else {
-      selectionSort(true);
+      selectionSort(array, true);
     }
   };
 
   const clickButtonDown = () => {
     if (methodSorting === "bubble") {
-      bubbleSort(false);
+      bubbleSort(array, false);
     } else {
-      selectionSort(false);
+      selectionSort(array, false);
     }
   };
 

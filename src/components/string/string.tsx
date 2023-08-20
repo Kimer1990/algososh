@@ -5,6 +5,7 @@ import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { delay } from "../../utils/utils";
 
 import styles from "./string.module.css";
 import { TArray } from "./utils";
@@ -18,32 +19,22 @@ export const StringComponent: React.FC = () => {
     setValueInput(e.currentTarget.value);
   };
 
-  const reverse = (arr: TArray[]) => {
+  const reverse = async (arr: TArray[]) => {
     setIsLoading(true);
     let head = 0;
     let tail = arr.length - 1;
 
-    changeColor(arr, head, tail, ElementStates.Changing);
-
-    if (head <= tail) {
-      const interval = setInterval(() => {
-        const temp = arr[head];
-        arr[head] = arr[tail];
-        arr[tail] = temp;
-
-        changeColor(arr, head, tail, ElementStates.Modified);
-
-        head++;
-        tail--;
-
-        if (head > tail) {
-          setIsLoading(false);
-          clearInterval(interval);
-        } else {
-          changeColor(arr, head, tail, ElementStates.Changing);
-        }
-      }, SHORT_DELAY_IN_MS);
+    while (head <= tail) {
+      changeColor(arr, head, tail, ElementStates.Changing);
+      await delay(SHORT_DELAY_IN_MS);
+      const temp = arr[head];
+      arr[head] = arr[tail];
+      arr[tail] = temp;
+      changeColor(arr, head, tail, ElementStates.Modified);
+      head++;
+      tail--;
     }
+    setIsLoading(false);
   };
 
   const changeColor = (
@@ -60,9 +51,6 @@ export const StringComponent: React.FC = () => {
   };
 
   const clickButton = () => {
-    console.log(isLoading);
-    setIsLoading(!isLoading);
-    console.log(isLoading);
     const arr = valueInput
       .split("")
       .map((value) => ({ value, color: ElementStates.Default }));
@@ -79,6 +67,7 @@ export const StringComponent: React.FC = () => {
         <div className={styles.inputbox}>
           <div className={styles.input}>
             <Input
+              type="text"
               maxLength={11}
               onChange={onChange}
               value={valueInput}
@@ -97,9 +86,9 @@ export const StringComponent: React.FC = () => {
         Максимум 11 символов
       </div>
 
-      <ul className={styles.curcles}>
+      <ul className={styles.circles}>
         {arrayLetters.map((item, index) => (
-          <li className={styles.curcle} key={index}>
+          <li className={styles.circle} key={index}>
             <Circle letter={item.value} state={item.color} />
           </li>
         ))}
